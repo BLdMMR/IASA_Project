@@ -3,88 +3,177 @@ import tiles.Object;
 import tiles.Target;
 import tiles.Tile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Environment {
-    private int LINE_SIZE;
-    private ArrayList<Tile> map = new ArrayList<>();
+    private int NUM_OF_COLLS;
+    private int NUM_OF_LINES = 1;
+
+    private LinkedList<LinkedList<Tile>> map = new LinkedList<>();
+
     private Agent agent;
 
 
     public Environment() {
-        try (FileInputStream is = new FileInputStream("D:\\ISEL\\2021v\\IASA\\Trabalho1\\src\\amb_p1.das")) {
-            byte[] bytes = is.readAllBytes();
+        File inFile = new File("./src/amb_p1.das");
+        try (Scanner in = new Scanner(inFile)) {
+            in.useDelimiter("[/n]");
+            int lineCount = 0;
 
-            for (int i = 0; i < bytes.length; i++) {
-                if ((char)bytes[i] == ' '){
-                    LINE_SIZE = i;
-                    break;
+            while (in.hasNextLine()) {
+                map.add(lineCount, new LinkedList<>());
+
+                char[] chars = in.nextLine().trim().toCharArray();
+
+                for (int i = 0; i < chars.length; i++) {
+                    char tileChar = chars[i];
+                    switch (tileChar) {
+                        case 'O': {
+                            map.get(lineCount).add(new Object(lineCount, i));
+                            break;
+                        }
+                        case '.': {
+                            map.get(lineCount).add(new Empty(lineCount, i));
+                            break;
+                        }
+                        case '>': {
+                            map.get(lineCount).add(new Agent(lineCount, i));
+                            this.agent = (Agent) map.get(lineCount).get(i);
+                            break;
+                        }
+                        case 'A': {
+                            map.get(lineCount).add(new Target(lineCount, i));
+                            break;
+                        }
+
+                    }
                 }
+                ++lineCount;
             }
+            NUM_OF_COLLS = map.getFirst().size();
+            NUM_OF_LINES = lineCount;
 
-            int x = 0;
-            int y = 0;
-            for(int i = 0; i < bytes.length; ++i) {
-
-                if (x == LINE_SIZE) {
-                    ++y;
-                    ++i;
-                    x = 0;
-                }
-
-                char tileChar = (char) bytes[i];
-                switch (tileChar) {
-                    case 'O': {
-                        map.add(new Object(x++, y));
-                        break;
-                    }
-                    case '.': {
-                        map.add(new Empty(x++, y));
-                        break;
-                    }
-                    case 'A': {
-                        map.add(new Target(x++, y));
-                        break;
-                    }
-                    case '>': {
-                        this.agent = new Agent(x++, y);
-                        map.add(this.agent);
-                    }
-                }
-            }
-
-        } catch (IOException e) {
-            System.out.println("Error with reading environment setting file");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-    }
-
-    public ArrayList<Tile> getMap() {
-        return map;
     }
 
     public void printMap() {
-        int i = 0;
-        for(Tile tile : map) {
-            if (i == LINE_SIZE) {
-                System.out.println();
-                i = 0;
+        for (int i = 0; i < NUM_OF_LINES; i++) {
+            for (int j = 0; j < NUM_OF_COLLS; j++) {
+                System.out.print(map.get(i).get(j).getRep());
             }
-            System.out.print(tile.getRep());
-            ++i;
+            System.out.println();
         }
     }
 
-    public int findElementInMap(int x, int y) {
-        for(Tile tile :map) {
-            if (tile.getX() == x && tile.getY() == y) {
-                return map.indexOf(tile);
+    public Tile getTileFromCoordinates(int x, int y) {
+        return map.get(x).get(y);
+    }
+
+    public LinkedList<Tile> getTilesLeft(int x, int y, Direction dir) {
+        LinkedList<Tile> tiles45Left = new LinkedList<>();
+        Tile tile;
+        int i = 1;
+        switch (dir) {
+            case LEFT : {
+                while ((tile = getTileFromCoordinates(x - i, y + i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case RIGHT : {
+                while ((tile = getTileFromCoordinates(x + i, y - i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case DOWN : {
+                while ((tile = getTileFromCoordinates(x + i, y + i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case UP : {
+                while ((tile = getTileFromCoordinates(x - i, y - i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
             }
         }
-        return -1;
+        return tiles45Left;
+    }
+
+    public LinkedList<Tile> getTilesRight(int x, int y, Direction dir) {
+        LinkedList<Tile> tiles45Left = new LinkedList<>();
+        Tile tile;
+        int i = 1;
+        switch (dir) {
+            case LEFT : {
+                while ((tile = getTileFromCoordinates(x - i, y - i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case RIGHT : {
+                while ((tile = getTileFromCoordinates(x + i, y + i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case DOWN : {
+                while ((tile = getTileFromCoordinates(x - i, y + i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case UP : {
+                while ((tile = getTileFromCoordinates(x + i, y - i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+        }
+        return tiles45Left;
+    }
+
+    public LinkedList<Tile> getTilesFront(int x, int y, Direction dir) {
+        LinkedList<Tile> tiles45Left = new LinkedList<>();
+        Tile tile;
+        int i = 1;
+        switch (dir) {
+            case LEFT : {
+                while ((tile = getTileFromCoordinates(x - i, y)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case RIGHT : {
+                while ((tile = getTileFromCoordinates(x + i, y)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case DOWN : {
+                while ((tile = getTileFromCoordinates(x, y + i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+            case UP : {
+                while ((tile = getTileFromCoordinates(x, y - i)) instanceof Object){
+                    tiles45Left.add(tile);
+                    ++i;
+                }
+            }
+        }
+        return tiles45Left;
     }
 
     public Agent getAgent() {
