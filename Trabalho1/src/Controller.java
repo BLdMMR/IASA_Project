@@ -26,23 +26,17 @@ public class Controller {
                 continue;
             }
 
-            Tile leftChecker = agent.checkForTarget(env.getTilesLeft(agent.getX(), agent.getY(), agent.getDir()))
+            Tile leftChecker = agent.checkForTarget(env.getTilesLeft(agent.getX(), agent.getY(), agent.getDir()));
             if (leftChecker instanceof Target) {/*if target is on the left*/
                 agent.moveLeft();
                 continue;
             }
 
-            if (frontChecker instanceof Object)
+            if (frontChecker instanceof Object) {
                 if (rightChecker instanceof Empty) agent.moveRight();
                 else if (leftChecker instanceof Empty) agent.moveLeft();
             }
         }
     }
 
-    public static void clearScreen() {
-        for (int i = 0; i < 50; i++) {
-            System.out.println();
-
-        }
-    }
 }
