@@ -1,4 +1,5 @@
 import jdk.jshell.spi.ExecutionControl;
+import tiles.Object;
 import tiles.Target;
 import tiles.Tile;
 
@@ -6,10 +7,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Agent extends Tile {
+    private LinkedList<Tile> crossedTiles = new LinkedList<>();
     private boolean foundTarget;
     private int initialX;
     private int initialY;
-    private Direction dir = Direction.LEFT;
+    private Direction dir = Direction.RIGHT;
+    private Direction turn = Direction.RIGHT;
 
     public Agent(int x, int y) {
         super(x, y);
@@ -26,7 +29,23 @@ public class Agent extends Tile {
         return foundTarget;
     }
 
-    public void move(int x, int y) {
+    public void move(LinkedList<Tile> tilesFront, LinkedList<Tile> tiles45Right, LinkedList<Tile> tiles45Left) {
+        if (!(tilesFront.getFirst() instanceof Object)) {
+            super.setY(this.getY() + 1);
+        }
+        else if (!(tiles45Right.getFirst() instanceof Object) && turn == Direction.RIGHT) {
+            super.setX(tiles45Right.getFirst().getX());
+            super.setY(tiles45Right.getFirst().getY());
+            this.dir = Direction.changeDirection(this, turn);
+        }
+        else if (!(tiles45Left.getFirst() instanceof Object) && turn == Direction.LEFT) {
+            super.setX(tiles45Left.getFirst().getX());
+            super.setY(tiles45Left.getFirst().getY());
+            this.dir = Direction.changeDirection(this, turn);
+        }
+        else {
+            this.dir = Direction.changeDirection(this, turn);
+        }
 
     }
 

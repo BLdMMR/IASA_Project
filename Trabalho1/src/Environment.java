@@ -79,101 +79,183 @@ public class Environment {
 
     public LinkedList<Tile> getTilesLeft(int x, int y, Direction dir) {
         LinkedList<Tile> tiles45Left = new LinkedList<>();
-        Tile tile;
+        int xFactor = 0;
+        int yFactor = 0;
+        switch(dir) {
+            case LEFT: {
+                xFactor = 1;
+                yFactor = -1;
+                break;
+            }
+            case RIGHT: {
+                xFactor = -1;
+                yFactor = 1;
+                break;
+            }
+            case UP: {
+                xFactor = -1;
+                yFactor = -1;
+                break;
+            }
+            case DOWN: {
+                xFactor = 1;
+                yFactor = 1;
+                break;
+            }
+            case UPLEFT: {
+                xFactor = 0;
+                yFactor = -1;
+                break;
+            }
+            case UPRIGHT: {
+                xFactor = -1;
+                yFactor = 0;
+                break;
+            }
+            case DOWNLEFT: {
+                xFactor = 1;
+                yFactor = 0;
+                break;
+            }
+            case DOWNRIGHT: {
+                xFactor = 0;
+                yFactor = 1;
+                break;
+            }
+        }
         int i = 1;
-        switch (dir) {
-            case LEFT : {
-                while ((tile = getTileFromCoordinates(x - i, y + i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+
+        while (true) {
+            Tile toAdd = getTileFromCoordinates(x + (i * xFactor), y + (i * yFactor));
+            if (toAdd instanceof Object) {
+                tiles45Left.add(toAdd);
+                break;
             }
-            case RIGHT : {
-                while ((tile = getTileFromCoordinates(x + i, y - i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
-            }
-            case DOWN : {
-                while ((tile = getTileFromCoordinates(x + i, y + i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
-            }
-            case UP : {
-                while ((tile = getTileFromCoordinates(x - i, y - i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
-            }
+            tiles45Left.add(toAdd);
+            i++;
         }
         return tiles45Left;
     }
 
     public LinkedList<Tile> getTilesRight(int x, int y, Direction dir) {
-        LinkedList<Tile> tiles45Left = new LinkedList<>();
-        Tile tile;
-        int i = 1;
-        switch (dir) {
-            case LEFT : {
-                while ((tile = getTileFromCoordinates(x - i, y - i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+        LinkedList<Tile> tiles45Right = new LinkedList<>();
+        int xFactor = 0;
+        int yFactor = 0;
+        switch(dir) {
+            case LEFT: {
+                xFactor = -1;
+                yFactor = -1;
+                break;
             }
-            case RIGHT : {
-                while ((tile = getTileFromCoordinates(x + i, y + i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case RIGHT: {
+                xFactor = 1;
+                yFactor = 1;
+                break;
             }
-            case DOWN : {
-                while ((tile = getTileFromCoordinates(x - i, y + i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case UP: {
+                xFactor = -1;
+                yFactor = 1;
+                break;
             }
-            case UP : {
-                while ((tile = getTileFromCoordinates(x + i, y - i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case DOWN: {
+                xFactor = 1;
+                yFactor = -1;
+                break;
+            }
+            case UPLEFT: {
+                xFactor = -1;
+                yFactor = 0;
+                break;
+            }
+            case UPRIGHT: {
+                xFactor = 0;
+                yFactor = 1;
+                break;
+            }
+            case DOWNLEFT: {
+                xFactor = 0;
+                yFactor = -1;
+                break;
+            }
+            case DOWNRIGHT: {
+                xFactor = 1;
+                yFactor = 0;
+                break;
             }
         }
-        return tiles45Left;
+        int i = 1;
+
+        while (true) {
+            Tile toAdd = getTileFromCoordinates(x + (i * xFactor), y + (i * yFactor));
+            if (toAdd instanceof Object) {
+                tiles45Right.add(toAdd);
+                break;
+            }
+            tiles45Right.add(toAdd);
+            i++;
+        }
+        return tiles45Right;
     }
 
     public LinkedList<Tile> getTilesFront(int x, int y, Direction dir) {
-        LinkedList<Tile> tiles45Left = new LinkedList<>();
-        Tile tile;
-        int i = 1;
-        switch (dir) {
-            case LEFT : {
-                while ((tile = getTileFromCoordinates(x - i, y)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+        LinkedList<Tile> tilesFront = new LinkedList<>();
+        int xFactor = 0;
+        int yFactor = 0;
+        switch(dir) {
+            case LEFT: {
+                xFactor = 0;
+                yFactor = -1;
+                break;
             }
-            case RIGHT : {
-                while ((tile = getTileFromCoordinates(x + i, y)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case RIGHT: {
+                xFactor = 0;
+                yFactor = 1;
+                break;
             }
-            case DOWN : {
-                while ((tile = getTileFromCoordinates(x, y + i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case UP: {
+                xFactor = -1;
+                yFactor = 0;
+                break;
             }
-            case UP : {
-                while ((tile = getTileFromCoordinates(x, y - i)) instanceof Object){
-                    tiles45Left.add(tile);
-                    ++i;
-                }
+            case DOWN: {
+                xFactor = 1;
+                yFactor = 0;
+                break;
+            }
+            case UPLEFT: {
+                xFactor = -1;
+                yFactor = -1;
+                break;
+            }
+            case UPRIGHT: {
+                xFactor = -1;
+                yFactor = 1;
+                break;
+            }
+            case DOWNLEFT: {
+                xFactor = 1;
+                yFactor = -1;
+                break;
+            }
+            case DOWNRIGHT: {
+                xFactor = 1;
+                yFactor = 1;
+                break;
             }
         }
-        return tiles45Left;
+        int i = 1;
+
+        while (true) {
+            Tile toAdd = getTileFromCoordinates(x + (i * xFactor), y + (i * yFactor));
+            if (toAdd instanceof Object) {
+                tilesFront.add(toAdd);
+                break;
+            }
+            tilesFront.add(toAdd);
+            i++;
+        }
+
+        return tilesFront;
     }
 
     public Agent getAgent() {

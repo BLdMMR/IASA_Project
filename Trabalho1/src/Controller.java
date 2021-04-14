@@ -1,9 +1,10 @@
 import tiles.Empty;
-import tiles.Object;
 import tiles.Target;
 import tiles.Tile;
 
+import javax.swing.*;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Controller {
 
@@ -11,32 +12,53 @@ public class Controller {
         Environment env = new Environment();
         env.printMap();
         Agent agent = env.getAgent();
+//        System.out.println("Agent Coordinates: " + agent.getX() + ", " + agent.getY());
+//        System.out.println("Agent Direction: " + agent.getDir());
+//        for(Tile tile :env.getTilesFront(13, 16, Direction.UP)) {
+//                System.out.println(tile);
+//        }
+        int i = 0;
         while(!agent.foundTarget()) {
 
-            Tile frontChecker = agent.checkForTarget(env.getTilesFront(agent.getX(), agent.getY(), agent.getDir()));
-
-            if (frontChecker instanceof Target) { /*if target is in front*/
-                agent.moveFront();
-                continue;
+            LinkedList<Tile> toAnalyseFront = env.getTilesFront(agent.getX(), agent.getY(), agent.getDir());
+            printList(toAnalyseFront);
+            if (checkForTarget(toAnalyseFront)) {
+                //move to target
             }
-
-            Tile rightChecker = agent.checkForTarget(env.getTilesRight(agent.getX(), agent.getY(), agent.getDir()));
-            if (rightChecker instanceof Target) {/*if target is on the right*/
-                agent.moveRight();
-                continue;
+            LinkedList<Tile> toAnalyseRight = env.getTilesRight(agent.getX(), agent.getY(), agent.getDir());
+            printList(toAnalyseRight);
+            if (checkForTarget(toAnalyseRight)) {
+                //move to target
             }
-
-            Tile leftChecker = agent.checkForTarget(env.getTilesLeft(agent.getX(), agent.getY(), agent.getDir()));
-            if (leftChecker instanceof Target) {/*if target is on the left*/
-                agent.moveLeft();
-                continue;
+            LinkedList<Tile> toAnalyseLeft = env.getTilesLeft(agent.getX(), agent.getY(), agent.getDir());
+            printList(toAnalyseLeft);
+            if (checkForTarget(toAnalyseLeft)) {
+                //move to target
             }
+            //if target not found
+            agent.move(toAnalyseFront, toAnalyseRight, toAnalyseLeft);
+            System.out.println(agent.getX() + ", " + agent.getY() + "->" + agent.getDir());
 
-            if (frontChecker instanceof Object) {
-                if (rightChecker instanceof Empty) agent.moveRight();
-                else if (leftChecker instanceof Empty) agent.moveLeft();
+            if (i++ == 14) break;
+        }
+    }
+
+    public static void printList(List list) {
+        for (var elem : list) {
+            System.out.println(elem);
+        }
+        System.out.println("---------------");
+    }
+
+    public static boolean checkForTarget(LinkedList<Tile> tilesToAnalyse) {
+        for (Tile tile : tilesToAnalyse) {
+            if (tile instanceof Target) {
+                System.out.println("Target Found");
+                return true;
+                //move to target
             }
         }
+        return false;
     }
 
 }
