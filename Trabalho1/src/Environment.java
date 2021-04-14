@@ -20,7 +20,7 @@ public class Environment {
 
 
     public Environment() {
-        File inFile = new File("./src/amb_p1.das");
+        File inFile = new File("amb_p1.das");
         try (Scanner in = new Scanner(inFile)) {
             in.useDelimiter("[/n]");
             int lineCount = 0;
