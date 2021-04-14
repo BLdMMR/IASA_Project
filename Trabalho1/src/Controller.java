@@ -11,54 +11,38 @@ public class Controller {
     public static void main(String[] args) {
         Environment env = new Environment();
         env.printMap();
+        System.out.println("----------------------");
         Agent agent = env.getAgent();
-//        System.out.println("Agent Coordinates: " + agent.getX() + ", " + agent.getY());
-//        System.out.println("Agent Direction: " + agent.getDir());
-//        for(Tile tile :env.getTilesFront(13, 16, Direction.UP)) {
-//                System.out.println(tile);
-//        }
-        int i = 0;
+
         while(!agent.foundTarget()) {
 
             LinkedList<Tile> toAnalyseFront = env.getTilesFront(agent.getX(), agent.getY(), agent.getDir());
-            printList(toAnalyseFront);
-            if (checkForTarget(toAnalyseFront)) {
-                //move to target
+            if (agent.checkForTarget(toAnalyseFront)) {
+                agent.moveToTarget(toAnalyseFront);
+                break;
             }
             LinkedList<Tile> toAnalyseRight = env.getTilesRight(agent.getX(), agent.getY(), agent.getDir());
-            printList(toAnalyseRight);
-            if (checkForTarget(toAnalyseRight)) {
-                //move to target
+            if (agent.checkForTarget(toAnalyseRight)) {
+                agent.moveToTarget(toAnalyseRight);
+                break;
             }
             LinkedList<Tile> toAnalyseLeft = env.getTilesLeft(agent.getX(), agent.getY(), agent.getDir());
-            printList(toAnalyseLeft);
-            if (checkForTarget(toAnalyseLeft)) {
-                //move to target
+            if (agent.checkForTarget(toAnalyseLeft)) {
+                agent.moveToTarget(toAnalyseLeft);
+                break;
             }
             //if target not found
             agent.move(toAnalyseFront, toAnalyseRight, toAnalyseLeft);
-            System.out.println(agent.getX() + ", " + agent.getY() + "->" + agent.getDir());
-
-            if (i++ == 14) break;
         }
+        env.updateMap(agent.getCrossed());
+        env.printMap();
     }
 
-    public static void printList(List list) {
-        for (var elem : list) {
-            System.out.println(elem);
+    public static void printList(LinkedList<Tile> list) {
+        for (Tile elem : list) {
+            System.out.print(elem.getRep());
         }
-        System.out.println("---------------");
-    }
-
-    public static boolean checkForTarget(LinkedList<Tile> tilesToAnalyse) {
-        for (Tile tile : tilesToAnalyse) {
-            if (tile instanceof Target) {
-                System.out.println("Target Found");
-                return true;
-                //move to target
-            }
-        }
-        return false;
+        System.out.println("\n---------------");
     }
 
 }

@@ -1,8 +1,7 @@
-import tiles.Empty;
+import tiles.*;
 import tiles.Object;
-import tiles.Target;
-import tiles.Tile;
 
+import javax.script.ScriptEngine;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -260,5 +259,12 @@ public class Environment {
 
     public Agent getAgent() {
         return agent;
+    }
+
+    public void updateMap(LinkedList<Tile> crossed) {
+        for (Tile tile : crossed) {
+            map.get(tile.getX()).remove(tile.getY());
+            map.get(tile.getX()).add(tile.getY(), tile);
+        }
     }
 }

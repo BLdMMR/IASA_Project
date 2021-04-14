@@ -7,6 +7,6 @@ public class Empty extends Tile{
 
     @Override
     public String getRep() {
-        return " ";
+        return ".";
     }
 }
